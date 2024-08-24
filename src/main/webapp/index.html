@@ -3,21 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> 현재 위치 날씨 </title>
+    <title> 5-Days Weather Forecast </title>
+    <script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=BfZeCoNwKW8W5jR0MCFsHIF0uJaUqGR0Pkvawabs"></script>
+    <script type="module" src="weather.js"></script>
 </head>
 
 <body>
+    <h1> 5-Day Weather Forecast </h1>
+    <button onclick="getLocation()" > 현재 위치는 ? </button>
 
-    <button class="button" type="button">현재 날씨는?</button>
-    <dl>
-        <dt>기온</dt>
-        <dd class="temperature"></dd>
-        <dt>위치</dt>
-        <dd class="place"></dd>
-        <dt>설명</dt>
-        <dd class="description"></dd>
-        <img class="icon" />
-    </dl>
-    <script src="weather.js"></script>
+    <div id="weather">
+
+    </div>
+
+    <div id="address">
+
+    </div>
+
 </body>
 </html>

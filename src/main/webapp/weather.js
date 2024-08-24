@@ -1,51 +1,89 @@
-const API_KEY = 'ffe6a9f9c945921a3380198396904732';
+import { API_KEY, naverMapClientId, naverMapClientSecret } from './apikey.js';
 
+//https://console.ncloud.com/naver-service/application
+//https://guide.ncloud-docs.com/docs/maps-reversegeocoding-api
+//https://api.ncloud-docs.com/docs/ai-naver-mapsreversegeocoding-gc
+async function getLocation(){
 
-const button = document.querySelector('.button');
-    // document안에서 'button'과 일치하는 것의 첫번째 요소 반환
-    button.addEventListener('click',()=>{
-   console.log(button)
-});
+    if( navigator.geolocation ){
+        navigator.geolocation.getCurrentPosition( async (position)=>{
+            const lat = position.coords.latitude;
+            const lon = position.coords.longitude;
+            const address = await getAddress(lat,lon);
 
-button.addEventListener('click',() => {
-   navigator.geolocation.getCurrentPosition(success , fail );
-});
+            console.log( address );
+            getWeather( lat , lon, address );
 
-const success = (position) => {
-    const latitude = position.coords.latitude;
-    const longitude = position.coords.longitude;
-
-    getWeather( latitude , longitude );
-};
-
-const fail = () => {
-    alert("좌표를 받아 올 수 없다.");
+        });
+    }else{
+        document.getElementById("weather").innerHTML = "Geolocation is not supported ny this browser.";
+    }
 }
 
-const tempSection = document.querySelector('.temperature');
-const placeSection = document.querySelector('.place');
-const descSection = document.querySelector('.description');
-const iconSection = document.querySelector('.icon');
+
+async function getAddress(lat, lon) {
 
 
-const getWeather = (lat, lon) => {
+    const corsProxy = 'https://cors-anywhere.herokuapp.com/';
+    const url = `${corsProxy}https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?coords=${lon},${lat}&output=json`;
+
+    return fetch(url, {
+        method: 'GET',
+        headers: {
+            'X-NCP-APIGW-API-KEY-ID': naverMapClientId,
+            'X-NCP-APIGW-API-KEY': naverMapClientSecret
+        }
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data && data.results && data.results.length > 0) {
+                console.log(data.results[0]);
+                let loc = `주소: ${data.results[0].region.area1.name} ${data.results[0].region.area2.name} ${data.results[0].region.area3.name }`;
+                console.log(loc);
+                return loc;
+
+            } else {
+                document.getElementById("address").innerHTML = "주소 정보를 가져올 수 없습니다.";
+            }
+        })
+        .catch(error => {
+            console.error("Error fetching the address: ", error);
+            document.getElementById("address").innerHTML = "주소 정보를 가져오는 중 오류가 발생했습니다.";
+        });
+}
+
+
+
+const getWeather = (lat,lon, address) =>{
+
     fetch(
         `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric&lang=kr`
     )
-        .then((response) => {
+        .then((response) =>{
             return response.json();
         })
         .then((json)=>{
-            const temperature = json.main.temp;
-            const place = json.name;
-            const description = json.weather[0].description;
-            const icon = json.weather[0].icon;
-            const iconURL = `http://openweathermap.org/img/wn/${icon}@2x.png`;
 
-            iconSection.setAttribute('src', iconURL );
+            let weatherHtml = `<h2>Location: ${address}</h2>`;
+            weatherHtml += `
+                <div>
+                    <h3> Current Weather </h3>
+                    <p> Temperature: ${json.main.temp} °C </p>
+                    <p> Weather: ${json.weather[0].description} </p>
+                </div>`;
 
-            tempSection.innerText = temperature;
-            placeSection.innerText = place;
-            descSection.innerText = description;
+            document.getElementById("weather").innerHTML = weatherHtml;
+        })
+        .catch((error)=>{
+            alert(error);
         });
 }
+window.getLocation = getLocation;
+
+
+

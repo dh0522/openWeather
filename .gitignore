@@ -40,3 +40,7 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+
+
+#.gitignore 파일 내용
+apikey.js
