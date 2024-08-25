@@ -4,21 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title> 5-Days Weather Forecast </title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=BfZeCoNwKW8W5jR0MCFsHIF0uJaUqGR0Pkvawabs"></script>
     <script type="module" src="weather.js"></script>
 </head>
 
-<body>
-    <h1> 5-Day Weather Forecast </h1>
-    <button onclick="getLocation()" > 현재 위치는 ? </button>
+<body class="bg-gray-100">
+    <div class="container mx-auto p-8">
+        <h1 style="text-align: center" class="text-2xl font-bold mb-6"> 5-Day Weather Forecast </h1>
 
-    <div id="weather">
+        <button onclick="getLocation()" style="display: block; margin: 0 auto" class="bg-blue-500 hover:bg blue-800 text-white font-bold py-2 px-4 rounded mt-3">
+            현재 위치의 날씨는 ?
+        </button>
+        <div style="text-align: center" id="address"> </div>
+        <div style="text-align: center" id="weather" class="mt-6" ></div>
 
     </div>
-
-    <div id="address">
-
-    </div>
-
 </body>
 </html>

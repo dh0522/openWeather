@@ -11,18 +11,17 @@ async function getLocation(){
             const lon = position.coords.longitude;
             const address = await getAddress(lat,lon);
 
-            console.log( address );
-            getWeather( lat , lon, address );
+           // todayWeather( lat , lon );
+            fetchWeather( lat , lon, address );
 
         });
     }else{
-        document.getElementById("weather").innerHTML = "Geolocation is not supported ny this browser.";
+        document.getElementById("weather").innerHTML = "Geolocation is not supported by this browser.";
     }
 }
 
 
 async function getAddress(lat, lon) {
-
 
     const corsProxy = 'https://cors-anywhere.herokuapp.com/';
     const url = `${corsProxy}https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?coords=${lon},${lat}&output=json`;
@@ -41,9 +40,10 @@ async function getAddress(lat, lon) {
             return response.json();
         })
         .then(data => {
-            if (data && data.results && data.results.length > 0) {
-                console.log(data.results[0]);
-                let loc = `주소: ${data.results[0].region.area1.name} ${data.results[0].region.area2.name} ${data.results[0].region.area3.name }`;
+            if ( data && data.results && data.results.length > 0 ) {
+
+                let loc = ` ${data.results[0].region.area1.name} ${data.results[0].region.area2.name} ${data.results[0].region.area3.name }`;
+                document.getElementById("address").innerHTML = `    <br>현재 위치는 ${loc} 입니다. `;
                 console.log(loc);
                 return loc;
 
@@ -58,31 +58,50 @@ async function getAddress(lat, lon) {
 }
 
 
-
-const getWeather = (lat,lon, address) =>{
+const fetchWeather = (lat,lon) =>{
 
     fetch(
-        `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric&lang=kr`
+        `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric&lang=kr`
+        // `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric&lang=kr`
     )
         .then((response) =>{
             return response.json();
         })
         .then((json)=>{
 
-            let weatherHtml = `<h2>Location: ${address}</h2>`;
-            weatherHtml += `
-                <div>
-                    <h3> Current Weather </h3>
-                    <p> Temperature: ${json.main.temp} °C </p>
-                    <p> Weather: ${json.weather[0].description} </p>
+
+
+            let timeForecast = document.getElementById("weather");
+            timeForecast.innerHTML = `<h2 class="text-xl mb-4"> 3시간 간격별 날씨 예보 </h2>`;
+
+            json.list.forEach(item=>{
+                console.log(item);
+                const iconUrl = `https://openweathermap.org/img/wn/${item.weather[0].icon}@2x.png`;
+                timeForecast.innerHTML +=
+                    `<div class="mb-3" >
+                    <p><strong>${new Date(item.dt_txt).toLocaleString()} </strong></p>
+                    <p>온도: ${item.main.temp}°C</p>
+                    <p>상태: ${item.weather[0].description}</p>
+                    <img src="${iconUrl}" alt = "Weather Icon" style="display: inline-block; margin: 0 auto;"/>
                 </div>`;
 
-            document.getElementById("weather").innerHTML = weatherHtml;
+            });
+            //
+            // let weatherHtml = `<h2>Location: ${address}</h2>`;
+            // weatherHtml += `
+            //     <div>
+            //         <h3> Current Weather </h3>
+            //         <p> Temperature: ${json.main.temp} °C </p>
+            //         <p> Weather: ${json.weather[0].description} </p>
+            //     </div>`;
+            //
+            // document.getElementById("weather").innerHTML = weatherHtml;
         })
         .catch((error)=>{
-            alert(error);
+            console.log('날씨 예보 정보를 가져오는데 실패했습니다', error );
         });
 }
+
 window.getLocation = getLocation;
 
 
