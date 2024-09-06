@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>오늘의 날씨</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="weatherContainer">
+    <div id="currentWeather">
+        <h1 id="cityName"></h1>
+        <div id="currentTemp"></div>
+        <div id="weatherDescription"></div>
+        <div id="highLowTemp"></div>
+        <div id="humidity"></div>
+    </div>
+    <div id="hourlyForecast">
+        <!-- 시간별 예보가 여기에 들어갑니다 -->
+    </div>
+    <div id="weeklyForecast">
+        <h2>주간예보</h2>
+        <!-- 주간 예보가 여기에 들어갑니다 -->
+    </div>
+</div>
+<script type="module" src="weather.js"></script>
+</body>
+</html>
